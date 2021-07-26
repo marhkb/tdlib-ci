@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install depepdencies
+        run: sudo apt-get install gperf ninja-build
+
+      - name: Download TDLib
+        run: wget -O tdlib.tar.gz https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz
+
+      - name: Extract TDLib
+        run: mkdir tdlib && tar -xf tdlib.tar.gz -C tdlib --strip-components=1
+
+      - name: Build TDLib
+        run: mkdir tdlib/build && cd tdlib/build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../output -G Ninja .. && sudo ninja install
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tdlib
+          path: tdlib/output
