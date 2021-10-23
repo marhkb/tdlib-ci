@@ -16,7 +16,7 @@ jobs:
         run: sudo apt-get install gperf ninja-build
 
       - name: Download TDLib
-        run: wget -O tdlib.tar.gz https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz
+        run: wget -O tdlib.tar.gz https://github.com/tdlib/td/archive/a7dcbe8c18938c67d35dee6da7782851e3b5ec4b.tar.gz
 
       - name: Extract TDLib
         run: mkdir tdlib && tar -xf tdlib.tar.gz -C tdlib --strip-components=1
