@@ -9,11 +9,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: docker.io/fedora:latest
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+      # Don't fail the whole workflow if one architecture fails
+      fail-fast: false
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install depepdencies
-        run: sudo apt-get install gperf ninja-build
+      - name: Install dependencies
+        run: |
+          dnf -y install docker
+
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
+
+      - name: Install dependencies 2
+        run: |
+          dnf -y install wget cmake gcc-c++ gcc gperf ninja-build openssl-devel zlib-devel
 
       - name: Download TDLib
         run: wget -O tdlib.tar.gz https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz
@@ -26,5 +43,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: tdlib
+          name: tdlib_${{ matrix.arch }}
           path: tdlib/output
